@@ -345,7 +345,7 @@ int main(int argc, char** argv){
     int fsize = ftell(f);    
     fseek(f, 0L, SEEK_SET);    
 
-    unsigned char *buffer=malloc(fsize);    
+    unsigned char *buffer= (unsigned char *)malloc(fsize);    
 
     fread(buffer, fsize, 1, f);    
     fclose(f);    
