@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int dissassemble8080(unsigned char* codebuffer, int pc){
+int Disassemble8080Ops(unsigned char* codebuffer, int pc){
 
     unsigned char* code = &codebuffer[pc];
     int opbyte = 1;
-    printf("%04x",pc);
+    printf("%04x ",pc);
     switch(*code){
         case 0x00: printf("NOP"); break;
 
@@ -230,41 +230,132 @@ int dissassemble8080(unsigned char* codebuffer, int pc){
         case 0xae: printf("SBB  M"); break;
         case 0xaf: printf("SBB  A"); break;
 
+        case 0xb0: printf("ORA  B"); break;
+        case 0xb1: printf("ORA  C"); break;
+        case 0xb2: printf("ORA  D"); break;
+        case 0xb3: printf("ORA  E"); break;
+        case 0xb4: printf("ORA  H"); break;
+        case 0xb5: printf("ORA  L"); break;
+        case 0xb6: printf("ORA  M"); break;
+        case 0xb7: printf("ORA  A"); break;
+
+        case 0xb8: printf("CMP  B"); break;
+        case 0xb9: printf("CMP  C"); break;
+        case 0xba: printf("CMP  D"); break;
+        case 0xbb: printf("CMP  E"); break;
+        case 0xbc: printf("CMP  H"); break;
+        case 0xbd: printf("CMP  L"); break;
+        case 0xbe: printf("CMP  M"); break;
+        case 0xbf: printf("CMP  A"); break;
+
+
+        case 0xc0: printf("RNZ"); break;
+        case 0xc1: printf("POP  B"); break;
+        case 0xc2: printf("JNZ addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xc3: printf("JMP addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;       
+        case 0xc4: printf("CNZ addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xc5: printf("PUSH B"); break;
+        case 0xc6: printf("ADI  #$%02x", code[1]); opbyte = 2; break;
+        case 0xc7: printf("RST  0"); break;
+        case 0xc8: printf("RZ"); break;
+        case 0xc9: printf("RET"); break;
+        case 0xca: printf("JZ   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xcb: printf("-"); break;
+        case 0xcc: printf("CZ   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xcd: printf("CALL   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xce: printf("ACI    #%02x",code[1]); opbyte = 2; break;
+        case 0xcf: printf("RST  1"); break;
+
+
+        case 0xd0: printf("RNC"); break;
+        case 0xd1: printf("POP  D"); break;
+        case 0xd2: printf("JNC addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xd3: printf("OUT  #%02x",code[1]); opbyte = 2; break;       
+        case 0xd4: printf("CNC addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xd5: printf("PUSH D"); break;
+        case 0xd6: printf("SUI  #$%02x", code[1]); opbyte = 2; break;
+        case 0xd7: printf("RST  2"); break;
+        case 0xd8: printf("RC"); break;
+        case 0xd9: printf("-"); break;
+        case 0xda: printf("JC   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xdb: printf("IN   #$%02x"); break;
+        case 0xdc: printf("CC   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xdd: printf("-"); break;
+        case 0xde: printf("SBI    #%02x",code[1]); opbyte = 2; break;
+        case 0xdf: printf("RST  3"); break;
 
 
 
+        case 0xe0: printf("RPO"); break;
+        case 0xe1: printf("POP  H"); break;
+        case 0xe2: printf("JPO addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xe3: printf("XTHL"); break;
+        case 0xe4: printf("CPO addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xe5: printf("PUSH H"); break;
+        case 0xe6: printf("ANI  #$%02x", code[1]); opbyte = 2; break;
+        case 0xe7: printf("RST  4"); break;
+        case 0xe8: printf("RPE"); break;
+        case 0xe9: printf("PCHL"); break;
+        case 0xea: printf("JPE   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xeb: printf("XCHG"); break;
+        case 0xec: printf("CPE   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xed: printf("-"); break;
+        case 0xee: printf("XRI    #%02x",code[1]); opbyte = 2; break;
+        case 0xef: printf("RST  5"); break;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        case 0xf0: printf("RP"); break;
+        case 0xf1: printf("POP  PSW"); break;
+        case 0xf2: printf("JP addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xf3: printf("DI"); break;
+        case 0xf4: printf("CP addr, #%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xf5: printf("PUSH PSW"); break;
+        case 0xf6: printf("ORI  #$%02x", code[1]); opbyte = 2; break;
+        case 0xf7: printf("RST  6"); break;
+        case 0xf8: printf("RM"); break;
+        case 0xf9: printf("SPHL"); break;
+        case 0xfa: printf("JM   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xfb: printf("EI"); break;
+        case 0xfc: printf("CM   addr,#%02x%02x",code[2],code[1]); opbyte = 3; break;
+        case 0xfd: printf("-"); break;
+        case 0xfe: printf("CPI    #%02x",code[1]); opbyte = 2; break;
+        case 0xff: printf("RST  7"); break;
 
     }
+    printf("\n");
+
+    return opbyte;
     
 
 
 }
 
 
+int main(int argc, char** argv){
+    FILE *f= fopen(argv[1], "rb"); 
 
-void main(){
+    if (f==NULL)    
+    {    
+        printf("error: Couldn't open %s\n", argv[1]);    
+        exit(1);    
+    }    
 
+    //Get the file size and read it into a memory buffer    
+    fseek(f, 0L, SEEK_END);    
+    int fsize = ftell(f);    
+    fseek(f, 0L, SEEK_SET);    
 
+    unsigned char *buffer=malloc(fsize);    
+
+    fread(buffer, fsize, 1, f);    
+    fclose(f);    
+
+    int pc = 0;    
+
+    while (pc < fsize)    
+    {    
+        pc += Disassemble8080Ops(buffer, pc);    
+    }    
+    return 0;  
 
 }
