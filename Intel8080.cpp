@@ -1,9 +1,12 @@
 #include "Intel8080.h"
 
-Intel8080::Intel8080()
+
+Intel8080::Intel8080(char* gameDir)
 {
+    m_gameDir = gameDir;
     ResetState();
     GenerateBuffer();
+
 
 }
 
@@ -38,16 +41,76 @@ void Intel8080::GenerateBuffer(){
 
     if (f==NULL)    
     {    
-        printf("error: Couldn't open %s\n", m_gameDir);    
-        exit(1);    
+        std::cout << "error: Couldn't open " << m_gameDir << std::endl;    
     }    
 
     //Get the file size and read it into a memory buffer    
     fseek(f, 0L, SEEK_END);    
-    int fsize = ftell(f);    
+    int fsize = ftell(f);  
+    m_gameBufferLen = fsize;  
+
     fseek(f, 0L, SEEK_SET);    
 
     m_gameBuffer = (unsigned char*) malloc(fsize);
 
+    fread(m_gameBuffer, fsize, 1, f);    
+    fclose(f);    
+
+
+
     
 }
+
+ void Intel8080::UnimplementedInstruction(unsigned char* instruction ){
+    //pc will have advanced one, so undo that   
+    printf("Error: Instruction $#%02x not yet implemented\n", m_gameBuffer[m_state.pc]);
+    exit(1);   
+ }
+
+ int Intel8080::run(){
+
+    while(m_state.pc < m_gameBufferLen){
+    
+        Emulate8080OpCode();
+
+    }
+
+
+ }
+ int Intel8080::Emulate8080OpCode(){
+
+    unsigned char* opcode = &m_state.memory[m_state.pc];
+
+    switch(*opcode){
+
+        case 0x00: printf("NOP"); break;
+        case 0x01:{ //LXI B,D16         B <- byte 3, C <- byte 2
+            m_state.b = opcode[2];
+            m_state.c = opcode[1];
+            m_state.pc +=2;
+            break;
+
+        }
+        case 0x02:{
+            m_state.memory[(m_state.b << 8) | (m_state.c) ] = m_state.a;
+
+
+        } printf("STAX B"); break;
+        case 0x03: printf("INX  B"); break;
+        case 0x04: printf("INR  B"); break;
+        case 0x05: printf("DCR  B"); break;
+        case 0x06: printf("MVI  B,#$%02x",code[1]); opbyte = 2; break;
+        case 0x07: printf("RLC"); break;
+
+        default:{ 
+            UnimplementedInstruction(opcode[0]);
+        }
+        
+    }
+
+
+
+
+
+
+ }

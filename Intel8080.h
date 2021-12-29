@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include "decompiler.c"
 
 typedef struct ConditionCodes //Condition flags of the 8080. Gets changed after some opcodes
@@ -38,19 +39,21 @@ private:
     char* m_gameDir; //Directory where the game file is located
 
     unsigned char* m_gameBuffer; //buffer that has all the of the game buffer.
+    int m_gameBufferLen;
 
-    void UnimplementedInstruction(); // Instruction not implemented, use this to remind myself what still needs to be done
+    void UnimplementedInstruction(unsigned char* instruction); // Instruction not implemented, use this to remind myself what still needs to be done
 
     void GenerateBuffer(); //Generate the game buffer to be used to emulate the game
     
     void ResetState(); // reinitialize the m_state of the 8080
 
 public:
-    Intel8080(/* args */);
+    Intel8080(char* gameDir);
     ~Intel8080();
 
-    int Emulate8080(); //Run the emulator
+    int Emulate8080OpCode(); //Run the emulator
 
+    int run();
 
 
 };
